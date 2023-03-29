@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"unbeatable-abayomi/commentsApi/internal/database"
 	transportHTTP "unbeatable-abayomi/commentsApi/internal/transport/http"
 )
 
@@ -15,6 +16,13 @@ type App struct{
 //Run sets up our Applications
 func (app *App)Run()error{
   fmt.Println("Setting Up Our App")
+
+  var err error
+  _, err = database.NewDatabase()
+  if err != nil{
+	 return err
+  }
+
   handler := transportHTTP.NewHandler()
   handler.SetupRoutes()
   if err := http.ListenAndServe(":8080",handler.Router); err != nil{
