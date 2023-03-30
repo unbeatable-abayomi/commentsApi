@@ -32,3 +32,64 @@ func NewService(db *gorm.DB)*Service{
 		DB: db,
 	}
 }
+
+//GetComment --retrieves a comment from the database by their ID
+func (s *Service) GetComment(ID uint)(Comment, error){
+
+	var comment Comment
+	if result := s.DB.First(&comment, ID); result.Error != nil {
+		return Comment{}, result.Error
+	}
+	return comment, nil
+
+
+}
+
+//GetCommentsBySlug retrieves all comment by slug (path - /article/name/ )
+func (s *Service)GetCommentsBySlug(slug string)([]Comment, error){
+      var comments []Comment
+
+	  if result := s.DB.Find(&comments).Where("slug = ?", slug); result.Error != nil{
+		  return []Comment{}, result.Error
+	  }
+
+	  return comments, nil;
+}
+
+//PostComment Adds a new comment to the database
+func (s *Service)PostComment(comment Comment)(Comment, error){
+    if result := s.DB.Save(&comment); result.Error != nil{
+		return Comment{}, result.Error
+	}
+	return comment , nil
+
+}
+//UpdateComment Update a comment in the database
+func (s *Service) UpdateComment (ID uint, newComment Comment)(Comment, error){
+      comment, err := s.GetComment(ID)
+
+	  if err != nil{
+		return Comment{}, nil
+	  }
+	  if result := s.DB.Model(&comment).Update(newComment); result.Error != nil{
+		return Comment{},nil
+	  }
+	  return comment, nil
+}
+
+//DeleteComment Delete a comment from the database by ID
+func (s *Service) DeleteComment(ID uint) error{
+   if result := s.DB.Delete(&Comment{}, ID); result.Error != nil{
+	    return result.Error
+   }
+   return nil
+}
+
+//GetAllComments Retrives all Commment from Database
+func (s *Service) GetAllComments()([]Comment, error){
+   var comments []Comment
+   if result := s.DB.Find(&comments); result.Error != nil {
+	   return comments, result.Error
+   }
+   return comments, nil
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"unbeatable-abayomi/commentsApi/internal/comment"
 	"unbeatable-abayomi/commentsApi/internal/database"
 	transportHTTP "unbeatable-abayomi/commentsApi/internal/transport/http"
 )
@@ -18,12 +19,14 @@ func (app *App)Run()error{
   fmt.Println("Setting Up Our App")
 
   var err error
-  _, err = database.NewDatabase()
+  db, err := database.NewDatabase()
   if err != nil{
 	 return err
   }
 
-  handler := transportHTTP.NewHandler()
+  commentService := comment.NewService(db);
+
+  handler := transportHTTP.NewHandler(commentService)
   handler.SetupRoutes()
   if err := http.ListenAndServe(":8080",handler.Router); err != nil{
 	fmt.Println("Failed to set up server")

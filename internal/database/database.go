@@ -27,6 +27,6 @@ func NewDatabase()(*gorm.DB, error){
 	   if err := db.DB().Ping(); err != nil{
 		return db, err
 	}
-	//fmt.Println("Setting up new DB Connection 22")
+	fmt.Println("Setting up new DB Connection 22")
 		return db, nil
 }
